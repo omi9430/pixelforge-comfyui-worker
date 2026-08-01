@@ -37,4 +37,10 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/pixelforge-comfyui-worker:latest
+          # A per-commit tag alongside :latest — RunPod (or any registry
+          # client) can cache a mutable tag and silently keep serving an
+          # old image. Point the endpoint at the SHA tag when debugging so
+          # a "did my fix actually deploy?" question always has a clear answer.
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/pixelforge-comfyui-worker:latest
+            ghcr.io/${{ github.repository_owner }}/pixelforge-comfyui-worker:${{ github.sha }}
