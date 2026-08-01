@@ -14,6 +14,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The base image is ~11GB; standard runners only have ~14GB free,
+      # which isn't enough headroom to pull + extract it. Reclaim space
+      # from preinstalled toolchains (.NET, Android SDK, GHC, etc.) we
+      # don't use in this build.
+      - uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: false
+          swap-storage: false
+
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
