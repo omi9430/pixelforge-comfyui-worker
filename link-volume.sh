@@ -11,6 +11,13 @@ if [ -d /runpod-volume/models ]; then
   ln -sfn /runpod-volume/models/text_encoders /comfyui/models/clip
   ln -sfn /runpod-volume/models/diffusion_models /comfyui/models/unet
   ln -sfn /runpod-volume/models/vae /comfyui/models/vae
+
+  # ComfyUI validated clip_name against the bare filename, but at load time
+  # re-resolved it as ".../clip/text_encoders/<file>" — a "text_encoders/"
+  # prefix that only exists when the clip/text_encoders folder categories
+  # get merged internally. A self-referencing symlink one level down makes
+  # both resolution styles land on the same real file.
+  ln -sfn /runpod-volume/models/text_encoders /runpod-volume/models/text_encoders/text_encoders
 fi
 
 # Hand off to the original entrypoint unchanged — GPU checks, ComfyUI launch,
