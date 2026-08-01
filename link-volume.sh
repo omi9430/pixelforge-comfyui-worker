@@ -20,12 +20,15 @@ if [ -d /runpod-volume/models ]; then
 
   # Nested "clip/text_encoders/" because ComfyUI resolves clip_name there
   # once the clip/text_encoders folder categories are merged internally.
-  cp -v -n /runpod-volume/models/text_encoders/*.safetensors /comfyui/models/clip/text_encoders/
-  cp -v -n /runpod-volume/models/diffusion_models/*.safetensors /comfyui/models/unet/
-  cp -v -n /runpod-volume/models/vae/*.safetensors /comfyui/models/vae/
+  # -f (not -n): a warm/reused worker container can already have a stale,
+  # empty, or partial file from an earlier attempt at this same path, and
+  # -n would skip over it, leaving the broken file in place forever.
+  cp -v -f /runpod-volume/models/text_encoders/*.safetensors /comfyui/models/clip/text_encoders/
+  cp -v -f /runpod-volume/models/diffusion_models/*.safetensors /comfyui/models/unet/
+  cp -v -f /runpod-volume/models/vae/*.safetensors /comfyui/models/vae/
 
-  echo "[link-volume] copy done, verifying:"
-  ls -la /comfyui/models/clip/text_encoders/ /comfyui/models/unet/ /comfyui/models/vae/
+  echo "[link-volume] copy done, verifying (size in bytes):"
+  find /comfyui/models/clip/text_encoders /comfyui/models/unet /comfyui/models/vae -name '*.safetensors' -exec stat -c '%n %s' {} \;
 else
   echo "[link-volume] WARNING: /runpod-volume/models not found — network volume not attached?"
 fi
