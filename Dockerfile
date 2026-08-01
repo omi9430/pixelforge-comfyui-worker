@@ -1,4 +1,4 @@
-FROM registry.runpod.net/runpod-workers-worker-comfyui-main-dockerfile:066a11c49
+FROM runpod/worker-comfyui:5.8.6-base
 COPY link-volume.sh /link-volume.sh
 RUN chmod +x /link-volume.sh
 ENTRYPOINT ["/link-volume.sh"]
