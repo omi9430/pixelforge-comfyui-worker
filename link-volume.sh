@@ -33,6 +33,7 @@ else
   echo "[link-volume] WARNING: /runpod-volume/models not found — network volume not attached?"
 fi
 
-# Hand off to the original entrypoint unchanged — GPU checks, ComfyUI launch,
-# and the RunPod job handler all still run exactly as the base image intends.
-exec /start.sh
+# Hand off to the original entrypoint (renamed in the Dockerfile) unchanged
+# — GPU checks, ComfyUI launch, and the RunPod job handler all still run
+# exactly as the base image intends.
+exec /start-original.sh
