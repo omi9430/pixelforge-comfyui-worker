@@ -1,12 +1,13 @@
 #!/bin/bash
 set -e
 
-# TEMPORARY DIAGNOSTIC CANARY: if this image is actually what RunPod runs,
-# the worker must fail to start. If it instead starts fine and reaches
-# "got prompt", the image/entrypoint below is being bypassed entirely
-# (e.g. FlashBoot resuming an old snapshot) rather than our fix not working.
-echo "[link-volume] CANARY: if you see this, the entrypoint DID run. Exiting on purpose."
-exit 17
+# RunPod's log viewer doesn't reliably surface stdout from this early in the
+# entrypoint (confirmed via a canary exit — the crash showed up as an
+# "unhealthy" worker, but never as visible log text). Mirror everything to
+# a file on the network volume too, so it's inspectable from any pod that
+# has the same volume attached, independent of the log viewer.
+exec > >(tee -a /runpod-volume/link-volume-debug.log) 2>&1
+echo "=== [link-volume] run at $(date -u +%Y-%m-%dT%H:%M:%SZ) ==="
 
 # This worker image's built-in extra_model_paths.yaml only maps the network
 # volume's models/unet and models/clip folders (not the newer
