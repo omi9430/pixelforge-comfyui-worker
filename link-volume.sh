@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+# TEMPORARY DIAGNOSTIC CANARY: if this image is actually what RunPod runs,
+# the worker must fail to start. If it instead starts fine and reaches
+# "got prompt", the image/entrypoint below is being bypassed entirely
+# (e.g. FlashBoot resuming an old snapshot) rather than our fix not working.
+echo "[link-volume] CANARY: if you see this, the entrypoint DID run. Exiting on purpose."
+exit 17
+
 # This worker image's built-in extra_model_paths.yaml only maps the network
 # volume's models/unet and models/clip folders (not the newer
 # diffusion_models/text_encoders naming) — see /comfyui/extra_model_paths.yaml
